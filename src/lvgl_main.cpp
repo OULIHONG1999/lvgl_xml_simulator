@@ -5,6 +5,7 @@
 #include <iostream>
 #include "lib/tinyxml/tinyxml2_convert.h"
 #include "page/page_xml_create/xml_page_create.h"
+#include "font/font.h"
 
 extern int GraphicElement_test_main();
 

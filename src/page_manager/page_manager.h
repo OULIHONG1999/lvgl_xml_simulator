@@ -6,7 +6,6 @@
 #define LVGL_PAGE_MANAGER_H
 
 #include "lvgl/lvgl.h"
-#include "font_manager.h"
 
 
 #define TIMEOUT (2*60)

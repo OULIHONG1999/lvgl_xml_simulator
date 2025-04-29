@@ -9,11 +9,16 @@
 <!--        <img src="battery-three-quarters.jpg" if="电池.电量条 == 3" left="90vw"></img>-->
 <!--        <img src="battery-full.jpg" if="电池.电量条 == 4" left="90vw"></img>-->
 
-<!--        <text top="50vh" font-size="8em" value="A" text-align="center"></text>-->
-        <text top="50vh" font-size="8em" value="时间.月 +'月'+ 时间.日 + '日'" text-align="center"></text>
-        <text top="70vh" font-size="3rem" value="时间.时 +':'+ 时间.分 +':'+ 时间.秒" text-align="center"></text>
-        <text top="80vh" font-size="2rem" value="item" text-align="center" for="item in 一路向北"
-              if="music.时 == item.substr(1, 2) &amp;&amp; music.分 == item.substr(4, 2) &amp;&amp; music.秒 == item.substr(7, 2)">
+        <text top="50px" font-size="8em" value="A" text-align="center"></text>
+        <text top="100px" font-color="0xff0000" font-size="12" value="时间.月 +'月'+ 时间.日 + '日'" text-align="center"></text>
+        <text top="70px" font-size="12" value="时间.时 +':'+ 时间.分 +':'+ 时间.秒" text-align="center"></text>
+        <text top="80px" font-size="12"
+              value="item"
+              text-align="center"
+              for="item in 一路向北"
+              if="music.时 == item.substr(1, 2) &amp;&amp;
+              music.分 == item.substr(4, 2) &amp;&amp;
+              music.秒 == item.substr(7, 2)">
         </text>
 
 <!--        <event if="keyup.SPACE">-->

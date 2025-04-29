@@ -15,6 +15,7 @@
 #include "xml_img/xml_img_create.h"
 #include "xml_label/xml_label_create.h"
 #include "xml_obj/xml_obj_create.h"
+#include "extract_padding.h"
 
 
 // 复制字符串
@@ -44,31 +45,40 @@ void lv_obj_set_base_element(lv_obj_t *obj, GraphicElement *ge) {
 #define LV_DEFAULT_HEIGHT 320
 
 typedef struct {
+    unsigned int text_color;
+    lv_align_t text_align;
+    const lv_font_t *font;
+} lv_text_t;
+
+typedef struct {
     int x;
     int y;
     int w;
     int h;
-    int padding[4];
+    Padding p;
     unsigned int bg_color;
     int border_width;
     unsigned int border_color;
     int radius;
-} activity_base_t;
+} lv_base_t;
+
+typedef struct {
+    lv_base_t base;
+    lv_style_t style;
+    lv_text_t text;
+} lv_data_t;
 
 typedef struct {
     std::string *id;
-    activity_base_t base;
     lv_obj_t *lv_obj;
+    lv_data_t *lv_data;
 } activity_t;
 
-typedef struct {
-    activity_t *activity;
-} lv_user_data_t;
 
 typedef struct {
     std::string *text;
-    activity_base_t base;
     lv_obj_t *lv_obj;
+    lv_data_t *lv_data;
 } text_t;
 
 // 提取等式右边的字符串
@@ -125,6 +135,13 @@ bool isRelative(const char *str1, const char *str2) {
     return false;
 }
 
+// 初始化lv_data_t 的内存接口
+lv_data_t *lv_data_init() {
+    lv_data_t *lv_data = (lv_data_t *) malloc(sizeof(lv_data_t));
+    lv_style_init(&lv_data->style);
+    return lv_data;
+}
+
 const char *find_element_attribute(const XMLElement *element, const char *attr_name) {
     const XMLAttribute *attribute = element->FindAttribute(attr_name);
     if (attribute) {
@@ -133,21 +150,102 @@ const char *find_element_attribute(const XMLElement *element, const char *attr_n
     return "";
 }
 
-lv_obj_t *lv_create_label(const XMLElement *element, lv_obj_t *parent, text_t *text) {
-    const char *align = find_element_attribute(element, "text-align");
-    const char *value = find_element_attribute(element, "value");
-    printf("align: %s, value: %s\n", align, value);
-    lv_obj_t *obj = lv_label_create(parent);
-    // 设置字体
-    lv_obj_set_style_text_font(obj, &lv_font_misans_14, 0);
-    // 设置颜色
-    lv_obj_set_style_text_color(obj, lv_color_hex(0xff000f), 0);
-    // 设置背景色
-    lv_obj_set_style_bg_color(obj, lv_color_hex(0xf00fff), 0);
-    lv_label_set_text(obj, value);
-    if (isRelative(align, "center")) {
-        lv_obj_center(obj);
+// 创建style
+lv_style_t *lv_create_style(const XMLElement *element, lv_data_t *lv_data) {
+    if (lv_data == nullptr)
+        return nullptr;
+    // 拿到style
+    lv_style_t *style = &lv_data->style; // 已经过初始化
+    // 提取padding
+    const char *padding = find_element_attribute(element, "padding");
+    if (std::strcmp(padding, "") != 0) {
+        extract_padding_values(padding, &lv_data->base.p);
+        print_padding_values(&lv_data->base.p);
     }
+
+    // 添加单个的pandding
+    const char *top = find_element_attribute(element, "top");
+    if (std::strcmp(top, "") != 0) {
+        lv_data->base.p.top = get_lv_px_value(top);
+        lv_style_set_pad_top(style, lv_data->base.p.top);
+    }
+    const char *right = find_element_attribute(element, "right");
+    if (std::strcmp(right, "") != 0) {
+        lv_data->base.p.right = get_lv_px_value(right);
+        lv_style_set_pad_right(style, lv_data->base.p.right);
+    }
+    const char *bottom = find_element_attribute(element, "bottom");
+    if (std::strcmp(bottom, "") != 0) {
+        lv_data->base.p.bottom = get_lv_px_value(bottom);
+        lv_style_set_pad_bottom(style, lv_data->base.p.bottom);
+    }
+    const char *left = find_element_attribute(element, "left");
+    if (std::strcmp(left, "") != 0) {
+        lv_data->base.p.left = get_lv_px_value(left);
+        lv_style_set_pad_left(style, lv_data->base.p.left);
+    }
+
+    // 获取bg_color
+    const char *bg_color = find_element_attribute(element, "bg-color");
+    if (std::strcmp(bg_color, "") != 0) {
+        lv_data->base.bg_color = color_string_to_hex(bg_color);
+        lv_style_set_bg_color(style, lv_color_hex(lv_data->base.bg_color));
+    }
+
+    // 获取字体颜色
+    const char *font_color = find_element_attribute(element, "font-color");
+    printf("font_color: %s\n", font_color);
+    if (std::strcmp(font_color, "") != 0) {
+        lv_data->text.text_color = color_string_to_hex(font_color);
+        lv_style_set_text_color(style, lv_color_hex(lv_data->text.text_color));
+    }
+
+    const char *border_color = find_element_attribute(element, "border-color");
+    if (std::strcmp(border_color, "") != 0) {
+        lv_data->base.border_color = color_string_to_hex(border_color);
+        lv_style_set_border_color(style, lv_color_hex(lv_data->base.border_color));
+    }
+    const char *border_width = find_element_attribute(element, "border-width");
+    if (std::strcmp(border_width, "") != 0) {
+        lv_data->base.border_width = get_lv_px_value(border_width);
+        lv_style_set_border_width(style, lv_data->base.border_width);
+    }
+    const char *text_color = find_element_attribute(element, "text-color");
+    if (std::strcmp(text_color, "") != 0) {
+        lv_data->text.text_color = color_string_to_hex(text_color);
+        lv_style_set_text_color(style, lv_color_hex(lv_data->text.text_color));
+    }
+    const char *text_font = find_element_attribute(element, "font");
+    if (std::strcmp(text_font, "") != 0) {
+        // TODO: 加载字体
+    }
+    const char *text_size = find_element_attribute(element, "font-size");
+    if (std::strcmp(text_size, "") != 0) {
+        lv_data->text.font = findFontByName(text_size);
+        lv_style_set_text_font(style, lv_data->text.font);
+    } else {
+        lv_style_set_text_font(style, findFontBySize(12));
+    }
+    const char *text_align = find_element_attribute(element, "text-align");
+    if (std::strcmp(text_align, "") != 0) {
+        lv_data->text.text_align = get_lv_align(text_align);
+        lv_style_set_text_align(style, lv_data->text.text_align);
+    }
+
+    return style;
+}
+
+lv_obj_t *lv_create_label(const XMLElement *element, lv_obj_t *parent, text_t *text) {
+    const char *value = find_element_attribute(element, "value");
+
+    // 分配text中的data内存
+    text->lv_data = lv_data_init();
+    // 初始化stylelv_data_t
+    lv_create_style(element, text->lv_data);
+    lv_obj_t *obj = lv_label_create(parent);
+    lv_label_set_text(obj, value);
+    // 设置style
+    lv_obj_add_style(obj, &text->lv_data->style, LV_PART_MAIN);
     if (text != nullptr)
         text->lv_obj = obj;
     return obj;

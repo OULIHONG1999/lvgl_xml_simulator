@@ -1,7 +1,4 @@
-#include "font_manager.h"
-
 #include <cstdio>
-
 #include "lvgl/lvgl.h"
 
 /*
@@ -16,9 +13,6 @@
 
 
 #include <stdlib.h>
-
-#include "lvgl/lvgl.h"
-
 
 typedef struct {
     uint16_t min;
@@ -56,13 +50,18 @@ static uint8_t *__user_font_getdata(int offset, int size) {
     //如字模已加载到SDRAM,直接返回偏移地址即可如:return (uint8_t*)(sdram_fontddr+offset);
 
     // 使用win32读取bin文件
-    FILE *fp = fopen("E:\\work_space\\LVGL\\SimulatorV8.3\\lv_simulator_show_xml\\src\\font\\lv_font_misans_14.bin", "rb");
+    FILE *fp = fopen(
+        "E:\\work_space\\LVGL\\SimulatorV8.3\\lv_simulator_show_xml\\src\\font\\lv_font_misans_10\\lv_font_misans_10.bin",
+        "rb");
     if (fp == NULL) {
         printf("open file failed\n");
         return NULL;
     }
     fseek(fp, offset, SEEK_SET);
-
+    if (__g_font_buf != NULL) {
+        free(__g_font_buf);
+        __g_font_buf = NULL;
+    }
     __g_font_buf = (uint8_t *) malloc(size);
 
     fread(__g_font_buf, 1, size, fp);
@@ -108,12 +107,12 @@ static bool __user_font_get_glyph_dsc(const lv_font_t *font, lv_font_glyph_dsc_t
 }
 
 
-//MiSans Normal,Regular,14
+//MiSans Normal,Regular,10
 //字模高度：0
 //XBF字体,外部bin文件
-const lv_font_t lv_font_misans_14 = {
+const lv_font_t lv_font_misans_10 = {
     .get_glyph_dsc = __user_font_get_glyph_dsc,
     .get_glyph_bitmap = __user_font_get_bitmap,
-    .line_height = 28,
+    .line_height = 20,
     .base_line = 0,
 };
