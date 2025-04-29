@@ -11,6 +11,9 @@ lv_obj_t *lv_xml_button_create(lv_obj_t *parent, GraphicElement *ge, const XMLEl
     lv_obj_t *button = lv_btn_create(parent);
     lv_obj_set_base_element(button, ge);
 
+    // 设置pad
+    lv_obj_set_style_pad_all(button, 0, 0);
+
     lv_obj_t *label = lv_label_create(button);
     lv_obj_center(label);
     const char *text = element->Attribute("text");

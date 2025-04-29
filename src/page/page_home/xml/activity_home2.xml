@@ -1,0 +1,48 @@
+<app version="1">
+    <activity id="main" if="self.id == activity">
+<!--        <audio id="music" src="一路向北.mp3"></audio>-->
+<!--        <img src="头像.jpg" z-index="-1" height="50vh"></img>-->
+
+<!--        <img src="battery-empty.jpg" if="电池.电量条 == 0" left="90vw"></img>-->
+<!--        <img src="battery-quarter.jpg" if="电池.电量条 == 1" left="90vw"></img>-->
+<!--        <img src="battery-half.jpg" if="电池.电量条 == 2" left="90vw"></img>-->
+<!--        <img src="battery-three-quarters.jpg" if="电池.电量条 == 3" left="90vw"></img>-->
+<!--        <img src="battery-full.jpg" if="电池.电量条 == 4" left="90vw"></img>-->
+
+<!--        <text top="50vh" font-size="8em" value="A" text-align="center"></text>-->
+        <text top="50vh" font-size="8em" value="时间.月 +'月'+ 时间.日 + '日'" text-align="center"></text>
+        <text top="70vh" font-size="3rem" value="时间.时 +':'+ 时间.分 +':'+ 时间.秒" text-align="center"></text>
+        <text top="80vh" font-size="2rem" value="item" text-align="center" for="item in 一路向北"
+              if="music.时 == item.substr(1, 2) &amp;&amp; music.分 == item.substr(4, 2) &amp;&amp; music.秒 == item.substr(7, 2)">
+        </text>
+
+<!--        <event if="keyup.SPACE">-->
+<!--            <log l0="准备进入设置"></log>-->
+<!--            <set activity="设置"></set>-->
+<!--        </event>-->
+    </activity>
+
+
+<!--    <activity id="设置" background-color="tomato" if="self.id == activity">-->
+
+<!--        <event if="keyup.SPACE">-->
+<!--            <log l0="准备进入首页"></log>-->
+<!--            <set activity="main"></set>-->
+<!--        </event>-->
+
+<!--        <text padding="10px 20px 10px 20px" border-radius="0 0 10px 10px" value="设置" text-align="center"-->
+<!--              background-color="#000" width="fit-content" color="#FFF" left="45vw"></text>-->
+
+<!--        <group flex-direction="column" top="50px" id="设置菜单">-->
+<!--            <group flex-direction="row" for="item in 设置">-->
+<!--                <text value="item.key"></text>-->
+<!--                <text value="item.value"></text>-->
+<!--            </group>-->
+
+<!--            <text value="重置绑定"></text>-->
+<!--            <text value="重置WIFI"></text>-->
+<!--            <text value="系统信息"></text>-->
+<!--        </group>-->
+
+<!--    </activity>-->
+</app>

@@ -3,7 +3,12 @@
 //
 
 #include "xml_page_create.h"
+
+#include <iostream>
+
 #include "../../page_manager/page_manager.h"
+#include "src/lib/forest/tree.h"
+#include "src/lib/link_list/link_list.h"
 #include "src/lib/tinyxml/tinyxml2.h"
 #include "src/page/graphic_element/graphic_element.h"
 #include "xml_button/xml_button_create.h"
@@ -35,8 +40,192 @@ void lv_obj_set_base_element(lv_obj_t *obj, GraphicElement *ge) {
     lv_obj_set_pos(obj, static_cast<lv_coord_t>(ge->x), static_cast<lv_coord_t>(ge->y));
 }
 
+#define LV_DEFAULT_WIDTH 170
+#define LV_DEFAULT_HEIGHT 320
+
+typedef struct {
+    int x;
+    int y;
+    int w;
+    int h;
+    int padding[4];
+    unsigned int bg_color;
+    int border_width;
+    unsigned int border_color;
+    int radius;
+} activity_base_t;
+
+typedef struct {
+    std::string *id;
+    activity_base_t base;
+    lv_obj_t *lv_obj;
+} activity_t;
+
+typedef struct {
+    activity_t *activity;
+} lv_user_data_t;
+
+typedef struct {
+    std::string *text;
+    activity_base_t base;
+    lv_obj_t *lv_obj;
+} text_t;
+
+// 提取等式右边的字符串
+std::string extractRightString(const std::string &equation) {
+    size_t equalPos = equation.find("==");
+    if (equalPos == std::string::npos) {
+        return ""; // 没有找到 == 符号，等式无效
+    }
+
+    // 提取左边部分
+    std::string left = equation.substr(0, equalPos);
+    // 去除左边部分可能存在的前后空格
+    left.erase(0, left.find_first_not_of(" \t"));
+    left.erase(left.find_last_not_of(" \t") + 1);
+
+    // 检查左边是否为 self.id
+    if (left != "self.id") {
+        return ""; // 左边不是 self.id
+    }
+
+    // 提取右边部分
+    std::string right = equation.substr(equalPos + 2);
+    // 去除右边部分可能存在的前后空格
+    right.erase(0, right.find_first_not_of(" \t"));
+    right.erase(right.find_last_not_of(" \t") + 1);
+
+    return right;
+}
+
+static std::string activity_id = "main";
+static ListNode *ls_head = nullptr;
+
+lv_obj_t *lv_create_activity(const XMLElement *element, activity_t *activity) {
+    lv_obj_t *obj = lv_obj_create(nullptr);
+    lv_obj_set_size(obj, LV_DEFAULT_WIDTH, LV_DEFAULT_HEIGHT);
+
+    std::string id = element->Attribute("id");
+    std::string if_ = element->Attribute("if");
+
+    // 判断if条件是否满足
+    if (std::strcmp(id.c_str(), activity_id.c_str()) == 0) {
+        // 加载lv_obj
+        lv_disp_load_scr(obj);
+    }
+    activity->lv_obj = obj;
+    return obj;
+}
+
+// 写个接口，判断两个字符串是否相对
+bool isRelative(const char *str1, const char *str2) {
+    if (std::strcmp(str1, str2) == 0) {
+        return true;
+    }
+    return false;
+}
+
+const char *find_element_attribute(const XMLElement *element, const char *attr_name) {
+    const XMLAttribute *attribute = element->FindAttribute(attr_name);
+    if (attribute) {
+        return attribute->Value();
+    }
+    return "";
+}
+
+lv_obj_t *lv_create_label(const XMLElement *element, lv_obj_t *parent, text_t *text) {
+    const char *align = find_element_attribute(element, "text-align");
+    const char *value = find_element_attribute(element, "value");
+    printf("align: %s, value: %s\n", align, value);
+    lv_obj_t *obj = lv_label_create(parent);
+    // 设置字体
+    lv_obj_set_style_text_font(obj, &lv_font_misans_14, 0);
+    // 设置颜色
+    lv_obj_set_style_text_color(obj, lv_color_hex(0xff000f), 0);
+    // 设置背景色
+    lv_obj_set_style_bg_color(obj, lv_color_hex(0xf00fff), 0);
+    lv_label_set_text(obj, value);
+    if (isRelative(align, "center")) {
+        lv_obj_center(obj);
+    }
+    if (text != nullptr)
+        text->lv_obj = obj;
+    return obj;
+}
+
+int lv_free_activity(void *) {
+    return 0;
+}
+
+// 递归遍历 XML 元素
+void traverseElement(const XMLElement *element, int depth = 0) {
+    if (!element) return;
+
+    // 打印元素名称
+    for (int i = 0; i < depth; ++i) {
+        std::cout << "  ";
+    }
+    std::cout << "Element: " << element->Name() << std::endl;
+    if (isRelative(element->Name(), "activity")) {
+        activity_t *activity = (activity_t *) malloc(sizeof(activity_t));
+        lv_create_activity(element, activity);
+        appendNode(ls_head, activity);
+    }
+
+    if (isRelative(element->Name(), "text")) {
+        int node_count = getNodeCount(ls_head);
+        ListNode *node = findNode(ls_head, node_count - 1);
+        if (node) {
+            activity_t *activity = (activity_t *) node->data;
+            text_t *text = (text_t *) malloc(sizeof(text_t));
+            lv_create_label(element, activity->lv_obj, text);
+        }
+    }
+
+
+    const XMLAttribute *attribute = element->FirstAttribute();
+    while (attribute) {
+        for (int i = 0; i < depth + 1; ++i) {
+            std::cout << "  ";
+        }
+        std::cout << "Attribute: " << attribute->Name() << " = " << attribute->Value() << std::endl;
+        attribute = attribute->Next();
+    }
+
+    // 打印元素文本内容
+    const char *text = element->GetText();
+    if (text && std::string(text).length() > 0) {
+        for (int i = 0; i < depth + 1; ++i) {
+            std::cout << "  ";
+        }
+        std::cout << "Text: " << text << std::endl;
+    }
+
+    // 递归遍历子元素
+    const XMLElement *child = element->FirstChildElement();
+    while (child) {
+        traverseElement(child, depth + 1);
+        child = child->NextSiblingElement();
+    }
+}
 
 void xml_page_create(const char *xml_path) {
+    // 加载 XML 文件
+    printf("xml_path: %s\n", xml_path);
+    XMLDocument doc;
+    if (doc.LoadFile(xml_path) != XML_SUCCESS) {
+        std::cerr << "无法加载 XML 文件: " << doc.ErrorStr() << std::endl;
+        return;
+    }
+
+    const XMLElement *root = doc.RootElement();
+    if (root) {
+        traverseElement(root);
+    }
+}
+
+
+void xml_page_create0(const char *xml_path) {
     // 创建 XML 文档
     XMLDocument doc;
     doc.LoadFile(xml_path);
