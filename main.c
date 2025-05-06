@@ -15,12 +15,15 @@
 #include "lvgl/lvgl.h"
 #include "lv_drivers/sdl/sdl.h"
 #include "src/lvgl_main.h"
+#include "src/res/res_tool/res_tool.h"
 #include "src/page_manager/page_manager.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 void lvgl_main();
+
+int sdl2_main();
 #ifdef __cplusplus
 }
 #endif
@@ -72,6 +75,10 @@ static void hal_init(void);
 
 
 int main(int argc, char **argv) {
+    sdl2_main();
+
+    return 0;
+
     (void) argc; /*Unused*/
     (void) argv; /*Unused*/
 
@@ -108,7 +115,9 @@ int main(int argc, char **argv) {
     //    by_remote_key_choice_ui_init();
 
     printf("\n*******************************************************\n");
-    lvgl_main();
+    // lvgl_main();
+
+
     while (1) {
         /* Periodically call the lv_task handler.
          * It could be done in a timer interrupt or an OS task too.*/
@@ -183,5 +192,3 @@ static void hal_init(void) {
     lv_img_set_src(cursor_obj, &mouse_cursor_icon); /*Set the image source*/
     lv_indev_set_cursor(mouse_indev, cursor_obj); /*Connect the image  object to the driver*/
 }
-
-
