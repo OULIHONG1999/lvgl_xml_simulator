@@ -1,0 +1,14 @@
+<ui>
+    <theme id="dark" background_color="000000" border_color="FFFFFF"/>
+    <theme id="light" background_color="ffffff" border_color="010101"/>
+    <screen width="300" height="300">
+        <button width="150" height="60" theme="light">
+            <label text="点击我"/>
+        </button>
+<!--        <img src="E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\res\img\icon.png"-->
+<!--             x="200" y="200"/>-->
+        <img src="E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\res\img\dog.gif"
+             x="100" y="100" />
+
+    </screen>
+</ui>

@@ -14,7 +14,6 @@
 #define SLEEP_TIMEOUT (2*60)
 #define TIMER lv_timer_t
 #define OBJ lv_obj_t
-#define SYS_BG_COLOR get_sys_background_colour()
 
 extern bool isBooted;
 
@@ -75,6 +74,7 @@ static void destroy_page_timer(PageTimer *timer) {
 
 
 extern user_activity_t act_home;
+extern user_activity_t act_img_test;
 
 
 lv_obj_t *create_activity_obj();

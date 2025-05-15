@@ -693,6 +693,9 @@
 # define LV_DEMO_MUSIC_AUTO_PLAY    0
 #endif
 
+
+
+
 /*--END OF LV_CONF_H--*/
 
 #endif /*LV_CONF_H*/

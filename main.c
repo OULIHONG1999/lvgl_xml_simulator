@@ -75,9 +75,9 @@ static void hal_init(void);
 
 
 int main(int argc, char **argv) {
-    sdl2_main();
-
-    return 0;
+    // sdl2_main();
+    //
+    // return 0;
 
     (void) argc; /*Unused*/
     (void) argv; /*Unused*/
@@ -115,7 +115,7 @@ int main(int argc, char **argv) {
     //    by_remote_key_choice_ui_init();
 
     printf("\n*******************************************************\n");
-    // lvgl_main();
+    lvgl_main();
 
 
     while (1) {

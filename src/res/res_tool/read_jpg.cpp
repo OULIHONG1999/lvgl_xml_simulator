@@ -75,7 +75,7 @@ int read_jpeg_dimensions_from_buffer(unsigned char *buffer, size_t buffer_size, 
 
 // 上面的 read_jpeg_dimensions_from_buffer 函数
 
-int main() {
+int main1() {
     const char *file_name = "E:\\work_space\\LVGL\\SimulatorV8.3\\lv_simulator_show_xml\\bin\\sample.jpg";
     unsigned char *buffer;
     unsigned int size;

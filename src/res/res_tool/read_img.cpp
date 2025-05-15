@@ -52,7 +52,7 @@ bool parse_jpeg_header(const unsigned char *data, int *width, int *height) {
 
 
 // 从数据缓冲区中查找 SOF 标记并读取图像尺寸
-int parse_jpeg_header(unsigned char *buffer, size_t buffer_size, int *width, int *height) {
+int parse_jpeg_header(const unsigned char *buffer, size_t buffer_size, int *width, int *height) {
     // 检查文件是否以 JPEG 标记开头
     if (buffer_size < 2 || buffer[0] != 0xFF || buffer[1] != 0xD8) {
         fprintf(stderr, "不是有效的 JPEG 文件\n");
@@ -116,7 +116,7 @@ bool parse_gif_header(const unsigned char *data, int *width, int *height) {
 }
 
 // 图片读取接口
-bool read_image(const char *file_path, ImageData *image_data) {
+bool image_read(const char *file_path, ImageData *image_data) {
     // 检查输入参数
     if (file_path == nullptr || image_data == nullptr) {
         printf("Invalid input parameters\n");
@@ -156,18 +156,21 @@ bool read_image(const char *file_path, ImageData *image_data) {
                 printf("Failed to parse PNG header\n");
                 return false;
             }
+            printf("PNG Image size: %dx%d\n", image_data->width, image_data->height);
             break;
         case IMAGE_FORMAT_JPG:
             if (parse_jpeg_header(image_data->data, image_data->size, &image_data->width, &image_data->height)) {
                 printf("Failed to parse JPEG header\n");
                 return false;
             }
+            printf("JPG Image size: %dx%d\n", image_data->width, image_data->height);
             break;
         case IMAGE_FORMAT_GIF:
             if (!parse_gif_header(image_data->data, &image_data->width, &image_data->height)) {
                 printf("Failed to parse GIF header\n");
                 return false;
             }
+            printf("GIF Image size: %dx%d\n", image_data->width, image_data->height);
             break;
         default:
             printf("Unsupported image format\n");
@@ -181,7 +184,7 @@ bool read_image(const char *file_path, ImageData *image_data) {
 }
 
 // 释放图片数据
-void free_image(ImageData *image_data) {
+void image_free(ImageData *image_data) {
     if (image_data != nullptr) {
         res_free_buffer((char *) image_data->data);
         memset(image_data, 0, sizeof(ImageData));
@@ -191,19 +194,19 @@ void free_image(ImageData *image_data) {
 
 void read_image_test() {
     ImageData image{};
-    if (read_image("sample.png", &image)) {
+    if (image_read("sample.png", &image)) {
         printf("PNG Image size: %dx%d\n", image.width, image.height);
-        free_image(&image);
+        image_free(&image);
     }
 
     // 读一个jpg
-    if (read_image("sample.jpg", &image)) {
+    if (image_read("sample.jpg", &image)) {
         printf("JPG Image size: %dx%d\n", image.width, image.height);
-        free_image(&image);
+        image_free(&image);
     }
     // 读一个gif
-    if (read_image("palette.gif", &image)) {
+    if (image_read("palette.gif", &image)) {
         printf("GIF Image size: %dx%d\n", image.width, image.height);
-        free_image(&image);
+        image_free(&image);
     }
 }

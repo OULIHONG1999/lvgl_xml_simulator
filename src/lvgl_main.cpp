@@ -1,25 +1,27 @@
 #include "lvgl_main.h"
 #include "src/page_manager/page_manager.h"
-#include <stddef.h>
-#include <stdio.h>
+#include <cstddef>
 #include <iostream>
-#include "lib/tinyxml/tinyxml2_convert.h"
 #include "page/page_xml_create/xml_page_create.h"
-#include "font/font.h"
 
-extern int GraphicElement_test_main();
+extern void lv_example_scroll_text(void);
 
-
+extern int test_image_loader();
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
 void lvgl_main() {
+    // test_image_loader();
+
     // start_activity(&act_home, NULL);
+    // start_activity(&act_img_test, NULL);
+
     xml_page_create(
-        R"(E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\page\page_home\xml\activity_home2.xml)");
-    // GraphicElement_test_main();
+        R"(E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\page\page_xml_create\xml\ui_layout.xml)");
+
+    // lv_example_scroll_text();
 }
 #ifdef __cplusplus
 }

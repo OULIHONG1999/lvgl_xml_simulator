@@ -19,8 +19,19 @@ struct ImageData {
     int width;
     int height;
     int channels;
-    unsigned char* data;
+    unsigned char *data;
     unsigned int size;
+
+    void (*img_free)(ImageData *image_data);
+
+    void (*img_read)(const char *file_path, ImageData *image_data);
 };
+
+// 图片读取接口
+bool image_read(const char *file_path, ImageData *image_data);
+
+// 释放图片数据
+void image_free(ImageData *image_data);
+
 
 #endif //READ_IMG_H
