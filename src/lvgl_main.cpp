@@ -9,6 +9,7 @@ extern void lv_example_scroll_text(void);
 extern int test_image_loader();
 extern void lv_example_text_animation();
 extern void lv_example_chat_animation();
+extern void test_animation();
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,8 +18,11 @@ extern "C" {
 void lvgl_main() {
     // test_image_loader();
     // lv_example_text_animation();
-    lv_example_chat_animation();
+    // lv_example_chat_animation();
     // start_activity(&act_home, NULL);
+
+    test_animation();
+
     // start_activity(&act_img_test, NULL);
 
     // xml_page_create(
