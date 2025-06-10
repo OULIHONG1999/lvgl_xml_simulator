@@ -28,10 +28,11 @@ extern "C" {
 void lvgl_main() {
     // test_lvgl_text_animation();
 
-    // pikaPython pikaPython;
+    pikaPython pikaPython;
+    // pikaScriptShell(pikaScriptInit());
 
-    xml_page_create(
-        R"(E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\page\page_xml_create\xml\ui_layout.xml)");
+    // xml_page_create(
+    //     R"(E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\page\page_xml_create\xml\ui_layout.xml)");
 
 
 }

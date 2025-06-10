@@ -2,7 +2,7 @@
     <theme id="dark" background_color="000000" border_color="FFFFFF"/>
     <theme id="light" background_color="ffffff" border_color="010101"/>
     <screen width="480" height="320" layout="grid" grid_cols="3" grid_rows="3">
-        <button width="130" height="60" theme="light" text="1" grid="" col_index="0" row_index="0"/>
+        <button width="130" height="60" theme="light" text="hello" grid="" col_index="0" row_index="0"/>
         <button width="130" height="60" theme="dark" text="2" grid="" col_index="1" row_index="1"/>
         <button width="130" height="60" theme="light" text="3" grid="" col_index="2" row_index="2"/>
         <button width="130" height="60" theme="dark" text="4" grid="" col_index="0" row_index="1">

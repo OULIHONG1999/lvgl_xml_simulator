@@ -18,6 +18,7 @@ PikaObj *pikaPythonInit(void){
     pika_platform_printf("======[pikapython packages installed]======\r\n");
     pika_printVersion();
     pika_platform_printf("PikaStdLib===v1.13.4\r\n");
+    pika_platform_printf("pika_lvgl===v0.4.1\r\n");
     pika_platform_printf("===========================================\r\n");
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __pikaMain = pikaMain;
@@ -25,7 +26,12 @@ PikaObj *pikaPythonInit(void){
     obj_linkLibrary(pikaMain, pikaModules_py_a);
 #if PIKA_INIT_STRING_ENABLE
     obj_run(pikaMain,
-            "# main.py\n"
+            "class Env:\n"
+            "    def __getattr__(self, item):\n"
+            "        return self[item]\n"
+            "env = Env()\n"
+            "env.a = 1\n"
+            "print(env.a)\n"
             "\n");
 #else 
     obj_runModule((PikaObj*)pikaMain, "main");

@@ -2,6 +2,7 @@ import subprocess
 
 # 指定要运行的exe文件路径
 exe_path = r"E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\pikaPackage\rust-msc-latest-win10.exe"
+# exe_path = r"E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\pikaPackage\pikaPackage.exe"
 
 # 调用exe文件
 try:
