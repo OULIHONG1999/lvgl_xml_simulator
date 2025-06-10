@@ -107,39 +107,6 @@
 #include "builtins_object.h"
 
 #ifndef PIKA_MODULE_MATH_DISABLE
-void Math_AdderMethod(PikaObj *self, Args *_args_){
-    Arg* res = Math_Adder(self);
-    method_returnArg(_args_, res);
-}
-method_typedef(
-    Math_Adder,
-    "Adder", ""
-);
-
-void Math_MultiplierMethod(PikaObj *self, Args *_args_){
-    Arg* res = Math_Multiplier(self);
-    method_returnArg(_args_, res);
-}
-method_typedef(
-    Math_Multiplier,
-    "Multiplier", ""
-);
-
-class_def(Math){
-    __BEFORE_MOETHOD_DEF
-    constructor_def(Math_Adder, 214943141),
-    constructor_def(Math_Multiplier, 872016268),
-};
-class_inhert(Math, TinyObj);
-
-PikaObj *New_Math(Args *args){
-    PikaObj *self = New_TinyObj(args);
-    obj_setClass(self, Math);
-    return self;
-}
-#endif
-
-#ifndef PIKA_MODULE_MATH_DISABLE
 void Math_Adder_byFloatMethod(PikaObj *self, Args *_args_){
     pika_float a = args_getFloat(_args_, "a");
     pika_float b = args_getFloat(_args_, "b");
@@ -318,9 +285,6 @@ class_inhert(PikaMain, PikaStdLib_SysObj);
 
 PikaObj *New_PikaMain(Args *args){
     PikaObj *self = New_PikaStdLib_SysObj(args);
-#ifndef PIKA_MODULE_MATH_DISABLE
-    obj_newObj(self, "Math", "Math", New_Math);
-#endif
 #ifndef PIKA_MODULE_PIKADEBUG_DISABLE
     obj_newObj(self, "PikaDebug", "PikaDebug", New_PikaDebug);
 #endif

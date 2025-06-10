@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <iostream>
 #include "page/page_xml_create/xml_page_create.h"
+#include "pika_python/pikaPython.h"
 
 extern void lv_example_scroll_text(void);
 
@@ -18,23 +19,21 @@ extern void user_test();
 
 extern void test_lvgl_text_animation();
 
-extern "C" {
-#include "pikaPackage/pikascript-core/PikaObj.h"
-
-PikaObj *pikaPythonInit(void);
-}
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 void lvgl_main() {
-    PikaObj *pikaMain = pikaScriptInit();
     // test_lvgl_text_animation();
+
+    // pikaPython pikaPython;
+
     xml_page_create(
         R"(E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\page\page_xml_create\xml\ui_layout.xml)");
+
+
 }
 #ifdef __cplusplus
 }

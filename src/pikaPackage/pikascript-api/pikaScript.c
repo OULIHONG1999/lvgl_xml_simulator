@@ -26,21 +26,6 @@ PikaObj *pikaPythonInit(void){
 #if PIKA_INIT_STRING_ENABLE
     obj_run(pikaMain,
             "# main.py\n"
-            "import Math\n"
-            "adder = Math.Adder()\n"
-            "muler = Math.Multiplier()\n"
-            "res1 = adder.byInt(1, 2)\n"
-            "print('1 + 2')\n"
-            "print(res1)\n"
-            "res2 = adder.byFloat(2.3, 4.2)\n"
-            "print('2.3 + 4.2')\n"
-            "print(res2)\n"
-            "res3 = muler.byInt(2, 3)\n"
-            "print('2 * 3')\n"
-            "print(res3)\n"
-            "res4 = muler.byFloat(2.3, 44.2)\n"
-            "print('2.3 * 44.2')\n"
-            "print(res4)\n"
             "\n");
 #else 
     obj_runModule((PikaObj*)pikaMain, "main");

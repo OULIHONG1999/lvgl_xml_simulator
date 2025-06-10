@@ -17,7 +17,5 @@
 
 PikaObj *New_Math(Args *args);
 
-Arg* Math_Adder(PikaObj *self);
-Arg* Math_Multiplier(PikaObj *self);
 
 #endif
