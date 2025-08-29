@@ -25,7 +25,7 @@ void xml_page_create(const char *xml_path) {
     RegisterComponentFactory("view", new ViewFactory()); // 注册view工厂
     RegisterComponentFactory("lv_button", new ButtonFactory());
     RegisterComponentFactory("lv_label", new LabelFactory());
-    RegisterComponentFactory("lv_img", new ImgFactory());
+    RegisterComponentFactory("img", new ImgFactory());
 
     XMLDocument doc;
     if (doc.LoadFile(xml_path) != XML_SUCCESS) {

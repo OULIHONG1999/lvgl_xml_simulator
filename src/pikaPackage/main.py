@@ -5,4 +5,4 @@ class Env:
 
 env = Env()
 env.a = 1
-print(env.a)
+# print(env.a)

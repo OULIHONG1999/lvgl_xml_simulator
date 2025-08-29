@@ -34,6 +34,8 @@ public:
         SetStateAttributes(obj, xmlElem);
         SetInteractionAttributes(obj, xmlElem);
         SetAnimationAttributes(obj, xmlElem);
+        ParseX(obj, xmlElem);
+        ParseY(obj, xmlElem);
         SetEventAttributes(obj, xmlElem);
         SetBindingAttributes(obj, xmlElem);
     }
@@ -121,6 +123,21 @@ protected:
         if (errno || result < 0 || result > INT_MAX || endptr == val || *endptr != '\0') return 0;
         return static_cast<int>(result);
     }
+
+    static void ParseX(lv_obj_t *obj, const XMLElement *xml) {
+        if (const char *x = xml->Attribute("x")) {
+            int val = ParseSize(x);
+            lv_obj_set_x(obj, val);
+        }
+    }
+
+    static void ParseY(lv_obj_t *obj, const XMLElement *xml) {
+        if (const char *y = xml->Attribute("y")) {
+            int val = ParseSize(y);
+            lv_obj_set_y(obj, val);
+        }
+    }
+
 
     static lv_align_t ParseAlign(const char *val) {
         if (!val) return LV_ALIGN_DEFAULT;

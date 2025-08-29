@@ -14,6 +14,9 @@ public:
     lv_obj_t *CreateComponent(lv_obj_t *parent, XMLElement *xmlElem) override {
         lv_obj_t *btn = lv_btn_create(parent);
 
+        // 设置公共属性（如位置、大小、对齐等）
+        SetCommonAttributes(btn, xmlElem);
+
         // 先设置基本属性（包括样式）
         SetObjAttributes(btn, xmlElem);
 
@@ -21,7 +24,8 @@ public:
         if (XMLElement *scriptElem = xmlElem->FirstChildElement("script")) {
             if (const char *scriptText = scriptElem->GetText()) {
                 printf("script: %s\n", scriptText);
-                pikaPython().run((char *) scriptText);
+                // PikaPython::getInstance().run((char *) scriptText);
+                PIKA_RUN(scriptText);
             }
         }
         return btn;
@@ -59,6 +63,6 @@ public:
 };
 
 // 静态变量定义
-std::unordered_map<std::string, lv_style_t*> StyleManager::namedStyles;
+std::unordered_map<std::string, lv_style_t *> StyleManager::namedStyles;
 
 #endif //BUTTON_FACTORY_H

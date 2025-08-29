@@ -26,8 +26,8 @@ extern "C" {
 #endif
 
 void pikaPython_run() {
-    pikaPython pikaPython;
-    // pikaScriptShell(pikaScriptInit());
+    PikaPython *pikaPython = &PikaPython::getInstance();
+    pikaScriptShell(pikaScriptInit());
 }
 
 void text_animation() {
@@ -57,9 +57,9 @@ void xml_load(const char *xml_path) {
 
 void lvgl_main() {
     // xml_load(R"(E:\work_space\LVGL\Simulator\lvgl8_3\lvgl_xml_simulator\src\xml_file\home.xml)");
-    xml_page_create(R"(E:\work_space\LVGL\Simulator\lvgl8_3\lvgl_xml_simulator\src\xml_file\home.xml)");
-    // xml_page_create(
-    //     R"(E:\work_space\LVGL\SimulatorV8.3\lv_simulator_show_xml\src\page\page_xml_create\xml\ui_layout.xml)");
+    // xml_page_create(R"(E:\work_space\LVGL\Simulator\lvgl8_3\lvgl_xml_simulator\src\xml_file\home.xml)");
+    xml_page_create(
+        R"(E:\work_space\LVGL\Simulator\lvgl8_3\lvgl_xml_simulator\src\page\page_xml_create\xml\ui_layout.xml)");
 
 }
 #ifdef __cplusplus

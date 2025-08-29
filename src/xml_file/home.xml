@@ -1,22 +1,20 @@
 <ui>
-    <screen name="demo_screen" width="480" height="320">
-        <view
-                name="main_view"
-                extends="lv_obj"
-                width="400"
-                height="300"
-                bg_color="#ffffff"
-                bg_opa="80"
-                radius="12"
-                shadow_width="6"
-                shadow_color="#888888"
-                pad="12"
-                flex_flow="column"
-                align="center"
-                row_gap="12"
-                scroll="true"
-                scroll_dir="vertical"
-        >
+    <screen>
+        <view name="main_view"
+              extends="lv_obj"
+              width="400"
+              height="300"
+              bg_color="#ffffff"
+              bg_opa="80"
+              radius="12"
+              shadow_width="6"
+              shadow_color="#888888"
+              pad="12"
+              flex_flow="column"
+              align="center"
+              row_gap="12"
+              scroll="true"
+              scroll_dir="vertical">
 
             <!-- ========== 按钮 1：使用按钮自带的 label，并改字体 ========= -->
             <lv_button

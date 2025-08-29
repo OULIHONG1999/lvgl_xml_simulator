@@ -1,7 +1,3 @@
-//
-// Created by Administrator on 2025/6/10.
-//
-
 #ifndef PIKAPYTHON_H
 #define PIKAPYTHON_H
 
@@ -11,33 +7,27 @@ extern "C" {
 
 #include "PikaObj.h"
 
-PikaObj *pikaPythonInit(void);
+    PikaObj *pikaPythonInit(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-class pikaPython {
+#include <mutex>
+
+#define PIKA_RUN(script) PikaPython::getInstance().run((char *) script)
+
+class PikaPython {
 public:
-    pikaPython() {
-        if (++refCount == 1) {
-            pikaMain = pikaPythonInit(); // 第一次构造时初始化
-        }
+    // 获取全局唯一实例
+    static PikaPython& getInstance() {
+        static PikaPython instance; // C++11 静态局部变量线程安全
+        return instance;
     }
 
-    ~pikaPython() {
-        if (--refCount == 0) {
-            if (pikaMain) {
-                obj_deinit(pikaMain);
-                pikaMain = nullptr;
-            }
-        }
-    }
-
-    // 禁止拷贝构造和赋值操作（防止浅拷贝）
-    pikaPython(const pikaPython &) = delete;
-
-    pikaPython &operator=(const pikaPython &) = delete;
+    // 禁止拷贝和赋值
+    PikaPython(const PikaPython&) = delete;
+    PikaPython& operator=(const PikaPython&) = delete;
 
     void run(char *script) {
         if (pikaMain && script) {
@@ -45,14 +35,23 @@ public:
             obj_run(pikaMain, script);
             printf("<<<<<<< pikaMain end >>>>>>>>\n");
         } else {
-            printf("<<<<<<<pikaMain or script is null>>>>>>>>\n");
+            printf("<<<<<<< pikaMain or script is null >>>>>>>>\n");
         }
     }
 
 private:
-    PikaObj *pikaMain; // 共享的 PikaObj 指针
-    int refCount; // 引用计数
+    PikaPython() {                 // 构造时初始化
+        pikaMain = pikaPythonInit();
+    }
+
+    ~PikaPython() {                // 析构时释放
+        if (pikaMain) {
+            obj_deinit(pikaMain);
+            pikaMain = nullptr;
+        }
+    }
+
+    PikaObj *pikaMain = nullptr;
 };
 
-
-#endif //PIKAPYTHON_H
+#endif // PIKAPYTHON_H

@@ -15,11 +15,11 @@
 
 volatile PikaObj *__pikaMain;
 PikaObj *pikaPythonInit(void){
-    pika_platform_printf("======[pikapython packages installed]======\r\n");
-    pika_printVersion();
-    pika_platform_printf("PikaStdLib===v1.13.4\r\n");
-    pika_platform_printf("pika_lvgl===v0.4.1\r\n");
-    pika_platform_printf("===========================================\r\n");
+    // pika_platform_printf("======[pikapython packages installed]======\r\n");
+    // pika_printVersion();
+    // pika_platform_printf("PikaStdLib===v1.13.4\r\n");
+    // pika_platform_printf("pika_lvgl===v0.4.1\r\n");
+    // pika_platform_printf("===========================================\r\n");
     PikaObj* pikaMain = newRootObj("pikaMain", New_PikaMain);
     __pikaMain = pikaMain;
     extern unsigned char pikaModules_py_a[];
@@ -34,7 +34,7 @@ PikaObj *pikaPythonInit(void){
             "print(env.a)\n"
             "\n");
 #else 
-    obj_runModule((PikaObj*)pikaMain, "main");
+    // obj_runModule((PikaObj*)pikaMain, "main");
 #endif
     return pikaMain;
 }

@@ -17,5 +17,6 @@ public:
 };
 
 std::optional<ImageResource> loader_image(const std::string &filePath, ImageResource &res) ;
+std::optional<ImageResource> loader_image_auto(const std::string &path, ImageResource &res);
 #endif // IMAGE_FACTORY_H
 

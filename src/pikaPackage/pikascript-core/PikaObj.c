@@ -788,10 +788,10 @@ PikaObj* newRootObj(char* name, NewFun newObjFun) {
     PikaObj* newObj = newNormalObj(newObjFun);
     if (!logo_printed) {
         logo_printed = 1;
-        pika_platform_printf("\r\n");
-        pika_platform_printf("~~~/ POWERED BY \\~~~\r\n");
-        pika_platform_printf("~  pikapython.com  ~\r\n");
-        pika_platform_printf("~~~~~~~~~~~~~~~~~~~~\r\n");
+        // pika_platform_printf("\r\n");
+        // pika_platform_printf("~~~/ POWERED BY \\~~~\r\n");
+        // pika_platform_printf("~  pikapython.com  ~\r\n");
+        // pika_platform_printf("~~~~~~~~~~~~~~~~~~~~\r\n");
     }
     if (NULL != __pikaMain) {
         pika_platform_printf("Error: root object already exists\r\n");

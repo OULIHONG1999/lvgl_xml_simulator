@@ -5,14 +5,17 @@
 #include "image_factory.h"
 #include <algorithm>
 #include <cstring>
+#include <filesystem>
 #include <iostream>
 #include <ostream>
 #include <fstream>
 
-#include "image_loager_manager/bmp_image_loader.h"
-#include "image_loager_manager/gif_image_loader.h"
-#include "image_loager_manager/jpg_image_loader.h"
-#include "image_loager_manager/png_image_loader.h"
+#include "flie_loader/FirmwareResourceManager.h"
+#include "flie_loader/NetworkImageLoader.h"
+#include "image_loader_manager/bmp_image_loader.h"
+#include "image_loader_manager/gif_image_loader.h"
+#include "image_loader_manager/jpg_image_loader.h"
+#include "image_loader_manager/png_image_loader.h"
 
 // **检测图片类型**
 std::string detectImageType(const unsigned char *data, size_t size) {
@@ -36,6 +39,81 @@ std::string imageTypeToString(ImageType type) {
     }
 }
 
+/**
+ * @brief 根据路径自动判断图片来源并加载
+ * @param path 输入的图片路径
+ *             - 网络URL: 以 http://、https://、ftp:// 开头
+ *             - 固件资源: 约定 res:// 前缀 或固件资源表存在
+ *             - 本地文件: 其他情况视为本地文件路径
+ * @param res  输出的图片资源对象（宽、高、数据等）
+ * @return 成功返回 ImageResource，失败返回 std::nullopt
+ */
+std::optional<ImageResource> loader_image_auto(const std::string &path, ImageResource &res) {
+    using namespace std::literals;
+
+    // 1. 网络 URL 检测
+    bool isHttp = path.rfind("http://", 0) == 0;
+    bool isHttps = path.rfind("https://", 0) == 0;
+    bool isFtp = path.rfind("ftp://", 0) == 0;
+
+    if (isHttp || isHttps || isFtp) {
+        std::cout << "[Loader] Detected network URL: " << path << std::endl;
+
+        if (NetworkImageLoader::LoadFromUrl(path, res)) {
+            res.sourceType = "network";
+            std::cout << "[Loader] Network image loaded: "
+                    << res.width << "x" << res.height
+                    << ", Size: " << res.size << " bytes" << std::endl;
+            return res;
+        }
+
+        std::cerr << "[Loader] Failed to load image from URL: " << path << std::endl;
+        return std::nullopt;
+    }
+
+    // 2. 固件资源检测（前缀匹配或查询资源表）
+    if (path.rfind("res://", 0) == 0 || FirmwareResourceManager::Exists(path)) {
+        std::cout << "[Loader] Detected firmware resource: " << path << std::endl;
+
+        if (FirmwareResourceManager::LoadImage(path, res)) {
+            res.sourceType = "firmware";
+            std::cout << "[Loader] Firmware image loaded: "
+                    << res.width << "x" << res.height
+                    << ", Size: " << res.size << " bytes" << std::endl;
+            return res;
+        }
+
+        std::cerr << "[Loader] Failed to load image from firmware: " << path << std::endl;
+        return std::nullopt;
+    }
+
+    // 3. 本地文件检测（绝对/相对路径）
+    if (std::filesystem::exists(path)) {
+        std::cout << "[Loader] Detected local file: " << path << std::endl;
+
+        auto loader = ImageFactory::CreateLoader(path);
+        if (!loader) {
+            std::cerr << "[Loader] Unsupported image format (local): " << path << std::endl;
+            return std::nullopt;
+        }
+
+        if (loader->LoadImage(path, res)) {
+            res.sourceType = "local";
+            std::cout << "[Loader] Local image loaded: "
+                    << res.width << "x" << res.height
+                    << ", Size: " << res.size << " bytes" << std::endl;
+            return res;
+        }
+
+        std::cerr << "[Loader] Image load failed (local): " << path << std::endl;
+        return std::nullopt;
+    }
+
+    // 4. 未知类型
+    std::cerr << "[Loader] Unknown image source type: " << path << std::endl;
+    return std::nullopt;
+}
+
 std::optional<ImageResource> loader_image(const std::string &filePath, ImageResource &res) {
     auto loader = ImageFactory::CreateLoader(filePath);
 
@@ -43,19 +121,16 @@ std::optional<ImageResource> loader_image(const std::string &filePath, ImageReso
         std::cerr << "Unsupported image format." << std::endl;
         return std::nullopt;
     }
+    // 3. 使用对应的加载器加载图片
     if (loader) {
         if (loader->LoadImage(filePath, res)) {
             std::cout << "Loaded Image: " << res.sourceType << ", Size: " << res.size << ", Dimensions: " << res.width
                     << "x" << res.height << std::endl;
-        } else {
-            std::cerr << "Image load failed." << std::endl;
-            return std::nullopt;
+            return res;
         }
-    } else {
-        std::cerr << "Unsupported image format." << std::endl;
-        return std::nullopt;
     }
-    return res;
+    std::cerr << "[Loader] Image load failed (local): " << filePath << std::endl;
+    return std::nullopt;
 }
 
 
