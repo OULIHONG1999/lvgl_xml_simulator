@@ -1,0 +1,73 @@
+<ui>
+    <screen name="demo_screen" width="480" height="320">
+        <view
+                name="main_view"
+                extends="lv_obj"
+                width="400"
+                height="300"
+                bg_color="#ffffff"
+                bg_opa="80"
+                radius="12"
+                shadow_width="6"
+                shadow_color="#888888"
+                pad="12"
+                flex_flow="column"
+                align="center"
+                row_gap="12"
+                scroll="true"
+                scroll_dir="vertical"
+        >
+
+            <!-- ========== 按钮 1：使用按钮自带的 label，并改字体 ========= -->
+            <lv_button
+                    label="刷新"
+                    width="120"
+                    height="40"
+                    event="on_click"
+                    event_handler="refresh_temperature"
+            >
+                <!-- 访问按钮内置 label 元素，直接改字体/颜色 -->
+                <lv_button-label text_font="font_20" text_color="#ff0000"/>
+            </lv_button>
+
+            <!-- ========== 按钮 2：按钮内嵌多个自定义 label ========= -->
+            <lv_button width="160" height="60">
+                <lv_label
+                        text="主标题"
+                        text_font="font_20"
+                        align="top_mid"
+                />
+                <lv_label
+                        text="副标题"
+                        text_font="font_14"
+                        align="bottom_mid"
+                        text_color="#555555"
+                />
+            </lv_button>
+
+            <!-- ========== 按钮 3：样式统一管理 label 字体 ========= -->
+            <style name="btn_label_style" text_font="font_18" text_color="#0088ff"/>
+
+            <lv_button label="提交" width="140" height="44">
+                <lv_button-label style="btn_label_style"/>
+            </lv_button>
+
+            <!-- ========== 按钮 4：label 内容绑定数据 subject ========= -->
+            <lv_button width="200" height="44">
+                <lv_button-label
+                        bind_text="temperature_subject"
+                        bind_text-fmt="当前温度: %d°C"
+                        text_font="font_16"
+                        text_color="#ff8800"
+                />
+            </lv_button>
+
+            <!-- ========== 按钮 5：纯图标按钮 + 旁边手动加 label ========= -->
+            <lv_button width="60" height="60">
+                <lv_image src="img_refresh" align="center"/>
+            </lv_button>
+            <lv_label text="刷新数据" align="center" text_font="font_14"/>
+
+        </view>
+    </screen>
+</ui>

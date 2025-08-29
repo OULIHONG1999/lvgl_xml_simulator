@@ -11,6 +11,7 @@
 #include "components/img_factory.h"
 #include "components/label_factory.h"
 #include "components/screen_factory.h"
+#include "components/ViewFactory.h"
 #include "src/lib/tinyxml/tinyxml2.h"
 #include "xml_parser/xml_parser.h"
 
@@ -21,9 +22,10 @@ using namespace tinyxml2;
 // **解析 XML 生成界面**
 void xml_page_create(const char *xml_path) {
     RegisterComponentFactory("screen", new ScreenFactory());
-    RegisterComponentFactory("button", new ButtonFactory());
-    RegisterComponentFactory("label", new LabelFactory());
-    RegisterComponentFactory("img", new ImgFactory());
+    RegisterComponentFactory("view", new ViewFactory()); // 注册view工厂
+    RegisterComponentFactory("lv_button", new ButtonFactory());
+    RegisterComponentFactory("lv_label", new LabelFactory());
+    RegisterComponentFactory("lv_img", new ImgFactory());
 
     XMLDocument doc;
     if (doc.LoadFile(xml_path) != XML_SUCCESS) {
@@ -38,9 +40,9 @@ void xml_page_create(const char *xml_path) {
     }
 
     // **先加载主题**
-    XMLElement *themeElem = root->FirstChildElement("theme");
+    XMLElement *themeElem = root->FirstChildElement("style");
     if (themeElem) {
-        StyleManager::LoadTheme(themeElem);
+        StyleManager::ParseTheme(themeElem);
     }
 
     // **确保 screen 解析正确**

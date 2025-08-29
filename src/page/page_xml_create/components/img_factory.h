@@ -138,7 +138,7 @@ public:
             }
 
             if (img) {
-                StyleManager::ApplyAttributes(img, xmlElem);
+
                 return img;
             }
         }

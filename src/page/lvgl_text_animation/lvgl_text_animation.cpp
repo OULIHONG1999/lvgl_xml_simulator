@@ -60,7 +60,7 @@ void LvTextAnimation::stop() {
 
 
 // 测试函数
-void test_lvgl_text_animation() {
+void lv_example_text_animation() {
     lv_obj_t *parent = lv_obj_create(lv_scr_act());
     lv_obj_set_size(parent, 200, 200);
     lv_obj_align(parent, LV_ALIGN_CENTER, 0, 0);

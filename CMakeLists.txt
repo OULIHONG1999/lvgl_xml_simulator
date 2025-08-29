@@ -51,6 +51,6 @@ include_directories(
 target_link_libraries(main
         "${SDL2_DIR}/lib/libSDL2.dll.a"
         "${SDL2_TTF_DIR}/lib/x64/SDL2_ttf.lib"
-        "${SDL2_IMAGE_DIR}/SDL2_image-2.8.4-win32-x64/SDL2_image.dll"
+#        "${SDL2_IMAGE_DIR}/SDL2_image-2.8.4-win32-x64/SDL2_image.dll"  # 未使用，可注释掉
 )
 

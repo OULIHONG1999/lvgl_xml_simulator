@@ -5,181 +5,107 @@
 #ifndef STYLE_MANAGER_H
 #define STYLE_MANAGER_H
 
-
 #include "../components/base_factory.h"
-
+#include <vector>
 
 class StyleManager {
 public:
-    static std::unordered_map<std::string, std::unordered_map<std::string, std::string> > themeStyles;
 
-    // **加载主题样式**
-    static void LoadTheme(XMLElement *themeElem) {
+    // 存储LVGL样式对象的映射表
+    // 键是样式名称，值是lv_style_t指针
+    static std::unordered_map<std::string, lv_style_t*> namedStyles;
+
+    static void ParseTheme(XMLElement *themeElem) {
         if (!themeElem) return;
 
-        std::string themeId = themeElem->Attribute("id");
-        if (themeId.empty()) return;
+        // 获取样式名称
+        const char *themeIdAttr = themeElem->Attribute("name");
+        if (!themeIdAttr) return;
+        std::string themeName = themeIdAttr;
 
-        std::unordered_map<std::string, std::string> attributes;
-        for (const XMLAttribute *attr = themeElem->FirstAttribute(); attr; attr = attr->Next()) {
-            attributes[attr->Name()] = attr->Value();
-        }
-        themeStyles[themeId] = attributes;
-    }
+        // 每次都新建一个 lv_style_t
+        auto *style = new lv_style_t;   // ✅ 在堆上分配
+        lv_style_init(style);                 // 初始化样式结构体
 
-    // **统一处理所有属性**
-    static void ApplyAttributes(lv_obj_t *obj, XMLElement *xmlElem) {
-        ApplyCommonAttributes(obj, xmlElem);
-        ApplyStyleAttributes(obj, xmlElem);
-        ApplyLayoutAttributes(obj, xmlElem);
-
-        if (const char *themeId = xmlElem->Attribute("theme")) {
-            ApplyThemeAttributes(obj, themeId);
-        }
-    }
-
-    // **通用属性**
-    static void ApplyCommonAttributes(lv_obj_t *obj, XMLElement *xmlElem) {
-        if (const char *width = xmlElem->Attribute("width")) {
-            lv_obj_set_width(obj, std::stoi(width));
-        }
-        if (const char *height = xmlElem->Attribute("height")) {
-            lv_obj_set_height(obj, std::stoi(height));
-        }
-        if (const char *x = xmlElem->Attribute("x")) {
-            lv_obj_set_x(obj, std::stoi(x));
-        }
-        if (const char *y = xmlElem->Attribute("y")) {
-            lv_obj_set_y(obj, std::stoi(y));
-        }
-    }
-
-    // **样式属性**
-    static void ApplyStyleAttributes(lv_obj_t *obj, XMLElement *xmlElem) {
-        if (const char *background_color = xmlElem->Attribute("background_color")) {
-            lv_obj_set_style_bg_color(obj, lv_color_hex(std::stoul(background_color, nullptr, 16)), 0);
-        }
-        if (const char *border_color = xmlElem->Attribute("border_color")) {
-            lv_obj_set_style_border_color(obj, lv_color_hex(std::stoul(border_color, nullptr, 16)), 0);
-        }
-    }
-
-    static void ApplyFlexLayout(lv_obj_t *obj, XMLElement *xmlElem) {
-        lv_obj_set_layout(obj, LV_LAYOUT_FLEX);
-
-        // **解析 flex 方向**
-        // **解析 flex_flow**
-        if (const char *flow = xmlElem->Attribute("flex_flow")) {
-            if (strcmp(flow, "row") == 0) lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW);
-            else if (strcmp(flow, "column") == 0) lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN);
-            else if (strcmp(flow, "row_wrap") == 0) lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_ROW_WRAP);
-            else if (strcmp(flow, "column_wrap") == 0) lv_obj_set_flex_flow(obj, LV_FLEX_FLOW_COLUMN_WRAP);
-        }
-
-        // **解析 flex_align**
-        if (const char *align = xmlElem->Attribute("flex_align")) {
-            if (strcmp(align, "start") == 0)
-                lv_obj_set_flex_align(obj,
-                                      LV_FLEX_ALIGN_START,
-                                      LV_FLEX_ALIGN_START,
-
-                                      LV_FLEX_ALIGN_START);
-            else if (strcmp(align, "center") == 0)
-                lv_obj_set_flex_align(obj,
-                                      LV_FLEX_ALIGN_CENTER,
-                                      LV_FLEX_ALIGN_CENTER,
-                                      LV_FLEX_ALIGN_CENTER);
-            else if (strcmp(align, "end") == 0)
-                lv_obj_set_flex_align(obj,
-                                      LV_FLEX_ALIGN_END,
-                                      LV_FLEX_ALIGN_END,
-                                      LV_FLEX_ALIGN_END);
-            else if (strcmp(align, "space_between") == 0)
-                lv_obj_set_flex_align(obj,
-                                      LV_FLEX_ALIGN_SPACE_BETWEEN,
-                                      LV_FLEX_ALIGN_CENTER,
-                                      LV_FLEX_ALIGN_CENTER);
-            else if (strcmp(align, "space_around") == 0)
-                lv_obj_set_flex_align(obj,
-                                      LV_FLEX_ALIGN_SPACE_AROUND,
-                                      LV_FLEX_ALIGN_CENTER,
-                                      LV_FLEX_ALIGN_CENTER);
-        }
-        // **解析 flex_grow**
-        if (const char *grow = xmlElem->Attribute("flex_grow")) {
-            int growValue = std::stoi(grow);
-            lv_obj_set_flex_grow(obj, growValue);
-        }
-
-        // **解析 flex_wrap**  换行被废弃了，使用grid代替
-        // if (const char *wrap = xmlElem->Attribute("flex_wrap")) {
-        //     if (strcmp(wrap, "wrap") == 0) lv_obj_set_flex_wrap(obj, LV_FLEX_WRAP_WRAP);
-        //     else if (strcmp(wrap, "nowrap") == 0) lv_obj_set_flex_wrap(obj, LV_FLEX_WRAP_NOWRAP);
-        // }
-    }
-
-    static void ApplyGridLayout(lv_obj_t *obj, XMLElement *xmlElem) {
-        lv_obj_set_layout(obj, LV_LAYOUT_GRID);
-
-        static lv_coord_t col_dsc[10];
-        static lv_coord_t row_dsc[10];
-
-        // **解析 grid 相关属性**
-        if (const char *cols = xmlElem->Attribute("grid_cols")) {
-            int num_cols = std::stoi(cols);
-            for (int i = 0; i < num_cols; i++) col_dsc[i] = LV_GRID_FR(1);
-            col_dsc[num_cols] = LV_GRID_TEMPLATE_LAST;
-        }
-        if (const char *rows = xmlElem->Attribute("grid_rows")) {
-            int num_rows = std::stoi(rows);
-            for (int i = 0; i < num_rows; i++) row_dsc[i] = LV_GRID_FR(1);
-            row_dsc[num_rows] = LV_GRID_TEMPLATE_LAST;
-        }
-
-        lv_obj_set_grid_dsc_array(obj, col_dsc, row_dsc);
-
-        // **解析 col_index 和 row_index，将子项绑定到单元格**
-        int col_index = xmlElem->IntAttribute("col_index", -1);
-        int row_index = xmlElem->IntAttribute("row_index", -1);
-
-        printf("col_index: %d, row_index: %d\n", col_index, row_index);
-
-        if (col_index >= 0 && row_index >= 0) {
-            lv_obj_set_grid_cell(obj, LV_GRID_ALIGN_CENTER, col_index, 1, LV_GRID_ALIGN_CENTER, row_index, 1);
-        }
+        // 解析 <style> 子标签并设置属性
+        for (XMLElement *styleElem = themeElem->FirstChildElement("style");
+             styleElem != nullptr;
+             styleElem = styleElem->NextSiblingElement("style")) {
+            ParseStyle(styleElem, style);      // 你的属性解析函数
+             }
+        // 存入映射表
+        namedStyles[themeName] = style;
     }
 
 
-    // **布局属性**
-    static void ApplyLayoutAttributes(lv_obj_t *obj, XMLElement *xmlElem) {
-        if (const char *layout = xmlElem->Attribute("layout")) {
-            if (strcmp(layout, "grid") == 0) {
-                ApplyGridLayout(obj, xmlElem);
-            } else if (strcmp(layout, "flex") == 0) {
-                ApplyFlexLayout(obj, xmlElem);
+    static void ParseStyle(XMLElement *styleElem, lv_style_t *style) {
+        if (!styleElem || !style) return;
+
+        // 遍历所有属性
+        const XMLAttribute *attr = styleElem->FirstAttribute();
+        while (attr) {
+            std::string attrName = attr->Name();
+            std::string attrValue = attr->Value();
+
+            // 常见属性映射
+            if (attrName == "bg_color") {
+                lv_color_t c = ParseColor(attrValue);
+                lv_style_set_bg_color(style, c);
             }
-        } else if (xmlElem->Attribute("grid")) {
-            ApplyGridLayout(obj, xmlElem);
+            else if (attrName == "bg_opa") {
+                lv_style_set_bg_opa(style, static_cast<lv_opa_t>(std::stoi(attrValue)));
+            }
+            else if (attrName == "radius") {
+                lv_style_set_radius(style, std::stoi(attrValue));
+            }
+            else if (attrName == "border_color") {
+                lv_color_t c = ParseColor(attrValue);
+                lv_style_set_border_color(style, c);
+            }
+            else if (attrName == "border_width") {
+                lv_style_set_border_width(style, std::stoi(attrValue));
+            }
+            else if (attrName == "text_color") {
+                lv_color_t c = ParseColor(attrValue);
+                lv_style_set_text_color(style, c);
+            }
+            // TODO: 继续扩展其他 LVGL 支持的样式属性
+
+            attr = attr->Next();
         }
     }
 
+    static bool ApplyStyleToObj(const std::string &styleName, lv_obj_t *obj, lv_part_t part = LV_PART_MAIN) {
+        if (!obj) return false;
 
-    // **主题属性**
-    static void ApplyThemeAttributes(lv_obj_t *obj, const char *themeId) {
-        auto it = themeStyles.find(themeId);
-        if (it != themeStyles.end()) {
-            for (const auto &[key, value]: it->second) {
-                if (key == "background_color") {
-                    lv_obj_set_style_bg_color(obj, lv_color_hex(std::stoul(value, nullptr, 16)), 0);
-                } else if (key == "border_color") {
-                    lv_obj_set_style_border_color(obj, lv_color_hex(std::stoul(value, nullptr, 16)), 0);
-                }
-            }
+        auto it = namedStyles.find(styleName);
+        if (it != namedStyles.end() && it->second) {
+            lv_obj_add_style(obj, it->second, part);
+            return true; // 应用成功
         }
+
+        // 可选：调试输出
+        printf("⚠️ style '%s' unfind\n", styleName.c_str());
+        return false;
+    }
+
+
+private:
+    static lv_color_t ParseColor(const std::string &hexStr) {
+        // 支持 "#RRGGBB" 或 "0xRRGGBB"
+        unsigned int rgb = 0;
+        if (hexStr.rfind("#", 0) == 0) {
+            rgb = std::stoul(hexStr.substr(1), nullptr, 16);
+        } else if (hexStr.rfind("0x", 0) == 0 || hexStr.rfind("0X", 0) == 0) {
+            rgb = std::stoul(hexStr.substr(2), nullptr, 16);
+        } else {
+            rgb = std::stoul(hexStr, nullptr, 16);
+        }
+        return lv_color_make((rgb >> 16) & 0xFF,
+                             (rgb >> 8) & 0xFF,
+                             rgb & 0xFF);
     }
 };
-
-std::unordered_map<std::string, std::unordered_map<std::string, std::string> > StyleManager::themeStyles;
 
 
 #endif //STYLE_MANAGER_H

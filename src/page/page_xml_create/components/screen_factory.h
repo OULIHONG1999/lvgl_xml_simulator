@@ -13,7 +13,9 @@ class ScreenFactory : public LVGLComponentFactory {
 public:
     lv_obj_t *CreateComponent(lv_obj_t *parent, XMLElement *xmlElem) override {
         lv_obj_t *screen = lv_obj_create(parent);
-        StyleManager::ApplyAttributes(screen, xmlElem);
+        lv_obj_remove_style_all(screen);
+        // 设置为屏幕大小
+        lv_obj_set_size(screen, LV_HOR_RES, LV_VER_RES);
         return screen;
     }
 
