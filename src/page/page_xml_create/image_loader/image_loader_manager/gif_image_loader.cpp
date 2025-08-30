@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 
-bool GIFImageLoader::LoadImage(const std::string& filePath, ImageResource& resource) {
+bool GIFImageLoader::LoadImageResource(const std::string& filePath, ImageResource& resource) {
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
     if (!file) {
         std::cerr << "Error: Could not open GIF file: " << filePath << std::endl;

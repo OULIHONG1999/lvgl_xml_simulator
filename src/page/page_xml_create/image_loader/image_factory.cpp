@@ -75,7 +75,7 @@ std::optional<ImageResource> loader_image_auto(const std::string &path, ImageRes
     if (path.rfind("res://", 0) == 0 || FirmwareResourceManager::Exists(path)) {
         std::cout << "[Loader] Detected firmware resource: " << path << std::endl;
 
-        if (FirmwareResourceManager::LoadImage(path, res)) {
+        if (FirmwareResourceManager::LoadImageResource(path, res)) {
             res.sourceType = "firmware";
             std::cout << "[Loader] Firmware image loaded: "
                     << res.width << "x" << res.height
@@ -97,7 +97,7 @@ std::optional<ImageResource> loader_image_auto(const std::string &path, ImageRes
             return std::nullopt;
         }
 
-        if (loader->LoadImage(path, res)) {
+        if (loader->LoadImageResource(path, res)) {
             res.sourceType = "local";
             std::cout << "[Loader] Local image loaded: "
                     << res.width << "x" << res.height
@@ -123,7 +123,7 @@ std::optional<ImageResource> loader_image(const std::string &filePath, ImageReso
     }
     // 3. 使用对应的加载器加载图片
     if (loader) {
-        if (loader->LoadImage(filePath, res)) {
+        if (loader->LoadImageResource(filePath, res)) {
             std::cout << "Loaded Image: " << res.sourceType << ", Size: " << res.size << ", Dimensions: " << res.width
                     << "x" << res.height << std::endl;
             return res;

@@ -9,7 +9,7 @@
 
 class JPGImageLoader : public ImageLoader {
 public:
-    bool LoadImage(const std::string& filePath, ImageResource& resource) override;
+    bool LoadImageResource(const std::string& filePath, ImageResource& resource) override;
 };
 
 #endif // JPG_IMAGE_LOADER_H

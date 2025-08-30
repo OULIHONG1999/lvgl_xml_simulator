@@ -11,7 +11,7 @@
 
 
 // 默认实现：通用图片加载失败处理
-bool ImageLoader::LoadImage(const std::string &filePath, ImageResource &resource) {
+bool ImageLoader::LoadImageResource(const std::string &filePath, ImageResource &resource) {
     std::cerr << "Error: ImageLoader does not support direct loading. Use a specialized loader." << std::endl;
     return false;
 }

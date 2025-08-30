@@ -1,6 +1,4 @@
 #include "lvgl_main.h"
-#include "src/page_manager/page_manager.h"
-#include <cstddef>
 #include <iostream>
 #include "page/page_xml_create/xml_page_create.h"
 #include "pika_python/pikaPython.h"
@@ -17,8 +15,6 @@ extern void lv_example_chat_animation();
 extern void test_animation();
 
 extern void user_test();
-
-extern void lv_example_text_animation();
 
 
 #ifdef __cplusplus
@@ -58,6 +54,8 @@ void xml_load(const char *xml_path) {
 void lvgl_main() {
     // xml_load(R"(E:\work_space\LVGL\Simulator\lvgl8_3\lvgl_xml_simulator\src\xml_file\home.xml)");
     // xml_page_create(R"(E:\work_space\LVGL\Simulator\lvgl8_3\lvgl_xml_simulator\src\xml_file\home.xml)");
+
+
     xml_page_create(
         R"(E:\work_space\LVGL\Simulator\lvgl8_3\lvgl_xml_simulator\src\page\page_xml_create\xml\ui_layout.xml)");
 

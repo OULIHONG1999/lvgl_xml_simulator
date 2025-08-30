@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 
-bool JPGImageLoader::LoadImage(const std::string &filePath, ImageResource &resource) {
+bool JPGImageLoader::LoadImageResource(const std::string &filePath, ImageResource &resource) {
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
     if (!file) {
         std::cerr << "Error: Could not open JPG file: " << filePath << std::endl;

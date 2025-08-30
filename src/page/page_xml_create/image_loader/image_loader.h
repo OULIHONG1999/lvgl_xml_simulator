@@ -10,7 +10,8 @@
 class ImageLoader {
 public:
     virtual ~ImageLoader() = default;
-    virtual bool LoadImage(const std::string& filePath, ImageResource& resource) = 0;
+
+    virtual bool LoadImageResource(const std::string &filePath, ImageResource &resource);
 };
 
 #endif // IMAGE_LOADER_H
